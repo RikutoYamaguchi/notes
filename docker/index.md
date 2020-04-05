@@ -68,6 +68,40 @@ CMD ["cat", "/hello.txt"]
 
 `docker build --target <ASでつけた名前>` でビルドできるけど、実践的にどう使うかまだ分からない
 
+# DockerでXdebug
+
+TODO: PhpStormで正常に動作しないので動くようにする
+
+`Dockerfile`
+
+```dockerfile
+# install xdebug
+RUN pecl install xdebug-2.8.1 \
+    && docker-php-ext-enable xdebug
+```
+
+`xdebug.ini`
+
+```ini
+[xdebug]
+xdebug.remote_enable=1
+xdebug.remote_autostart=1
+xdebug.remote_host=host.docker.internal
+xdebug.remote_port=9001
+xdebug.remote_log=/tmp/xdebug.log
+xdebug.idekey = "PHPSTORM"
+```
+
+`docker-compose.yml`
+
+`xdebug.ini` をマウントする
+
+```yml
+  [service name]:
+    volumes:
+      - ./docker/php-fpm/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+```
+
 # 参考情報
 
 https://www.slideshare.net/zembutsu/explaining-best-practices-for-writing-dockerfiles
